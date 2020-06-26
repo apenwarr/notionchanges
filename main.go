@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/kjk/notionapi"
@@ -203,10 +204,18 @@ func main() {
 		log.Fatalf("main.html template: %v", err)
 	}
 
+	var mu sync.Mutex
+	var lastUpdated time.Time
+
 	cache := NewCache(client, spaceID)
 	cache.Load()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// It's too much work to figure out concurrency here, just
+		// skip it. We don't expect a lot of parallel requests.
+		mu.Lock()
+		defer mu.Unlock()
+
 		// Refresh template so we don't have to recompile every time
 		// while debugging.
 		t, err = template.ParseFiles("main.html")
@@ -214,9 +223,12 @@ func main() {
 			log.Fatalf("main.html template: %v", err)
 		}
 
-		changed := cache.Update()
-		if changed {
-			cache.Save()
+		if time.Since(lastUpdated) > time.Second*60 {
+			changed := cache.Update()
+			if changed {
+				cache.Save()
+			}
+			lastUpdated = time.Now()
 		}
 
 		pages := collectHistory(cache)
