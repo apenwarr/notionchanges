@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/kjk/notionapi"
+	"github.com/apenwarr/notionapi"
 )
 
 const cacheFile = "cache.json"

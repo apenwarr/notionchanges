@@ -2,6 +2,4 @@ module github.com/apenwarr/notionchanges
 
 go 1.13
 
-replace github.com/kjk/notionapi => ./notionapi
-
-require github.com/kjk/notionapi v0.0.0-00010101000000-000000000000
+require github.com/apenwarr/notionapi v0.0.0-20200626141008-9da9786a0a9e

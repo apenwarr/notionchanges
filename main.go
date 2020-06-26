@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kjk/notionapi"
+	"github.com/apenwarr/notionapi"
 )
 
 var keyFile = "notion.key"
