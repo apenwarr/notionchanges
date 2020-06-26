@@ -39,7 +39,7 @@ func NewCache(client *notionapi.Client, spaceID string) *Cache {
 	}
 }
 
-func (c *Cache) Update() {
+func (c *Cache) Update() (changed bool) {
 	next := ""
 	n := 0
 
@@ -62,7 +62,6 @@ retrieve:
 		mergeRecordMap(&c.RecordMap, acts.RecordMap)
 
 		for _, aid := range acts.ActivityIDs {
-			n++
 			if aid == lookingFor {
 				// caught up to old cached values
 				nids = append(nids, oids...)
@@ -70,6 +69,7 @@ retrieve:
 			} else {
 				nids = append(nids, aid)
 			}
+			n++
 		}
 
 		next = acts.NextID
@@ -80,6 +80,7 @@ retrieve:
 	}
 
 	c.ActivityIDs = nids
+	return n > 0
 }
 
 func (c *Cache) Load() {

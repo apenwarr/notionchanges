@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>RecentChanges in Notion</title>
+<style>
+  a {
+    text-decoration: none;
+  }
+  td {
+    padding: 0.2em;
+  }
+  td.when, td.who {
+    white-space: nowrap;
+  }
+  td.who {
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<h2>Recent changes in Notion</h2>
+
+<table>
+{{ range .Pages }}
+  {{ if .Permitted }}
+  <tr>
+    <td class="who">{{.Who}}</td>
+    <td class="when"><a href="{{.URL}}">{{.Date}}</a></td>
+    <td class="what">{{.Title}}</td>
+  </tr>
+  {{ end }}
+{{ end }}
+</table>
+
+</body>
+</html>
