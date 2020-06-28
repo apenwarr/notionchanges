@@ -73,6 +73,7 @@ type Page struct {
 	Permitted bool
 	Title     string
 	Path      []string
+	PathLast  string
 }
 
 func (p *Page) URL() string {
@@ -192,6 +193,9 @@ func collectHistory(cache *Cache) []Page {
 		} else {
 			p.Title = titles[0]
 			titles = titles[1:]
+			if len(titles) > 0 {
+				p.PathLast = titles[0]
+			}
 			for i := range titles {
 				p.Path = append(p.Path, titles[len(titles)-1-i])
 			}

@@ -1,75 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>RecentChanges in Notion</title>
+<title>Recent changes to Notion pages</title>
 <style>
   body {
     font-family: times, serif;
+    max-width: 6in;
+    margin: 0 auto 0 auto;
   }
   a {
     text-decoration: none;
   }
-  table {
-    margin-left: auto;
-    margin-right: auto;
-    border-spacing: 2px;
-    border-collapse: collapse;
+  .when {
+    margin-top: 1em;
+    font-size: 150%;
   }
-  tr {
-    border-bottom: 1px solid #eee;
+  .entry {
+    padding: 0.15em 0em 0.15em 0em;
+    text-indent: -1.5in;
+    padding-left: 1.5in;
   }
-  tr:hover {
+  .entry:hover {
     background: #eee;
   }
-  td {
-    padding: 0.2em 0.4em 0.2em 0.4em;
-  }
-  td.what {
-    max-width: 5in;
-  }
-  td.when, td.who {
-    white-space: nowrap;
-  }
-  td.who {
+  .who {
+    display: inline-block;
+    overflow: hidden;
+    width: 1.2in;
+    vertical-align: bottom;
     text-align: right;
+    margin-right: 0.1in;
   }
-  .path {
-    display: block;
-    font-size: 70%;
-    color: #888;
-  }
-  .pathbit {
-    white-space: nowrap;
-  }
-  .title {
-    display: block;
-    padding-left: 0.5em;
+  .what {
+    display: inline;
+    vertical-align: bottom;
   }
 </style>
 </head>
 <body>
 
-<h2>Recent changes in Notion</h2>
+<h2>Recent changes to Notion pages</h2>
 
-<table>
-{{ range .Pages }}
-  {{ if .Permitted }}
-  <tr>
-    <td class="who">{{.Who}}</td>
-    <td class="when">{{.Date}}</a>
-    <td class="what">
-      {{if .Path}}
-        <span class="path">
-        {{range .Path}}
-          <span class="pathbit">{{.}} →</span>
+{{$lastDate := ""}}
+{{range .Pages}}
+  {{if .Permitted}}
+  {{if ne $lastDate .Date}}
+    <div class="when">{{.Date}}</div>
+    {{$lastDate = .Date}}
+  {{end}}
+  <div class="entry">
+    <span class="who">{{.Who}}</span>
+    <div class="what">
+        {{if .PathLast}}
+          {{.PathLast}}:
         {{end}}
-        </span>
-      {{end}}
-      <a class="title" target="_blank" href="{{.URL}}">{{.Title}}</a>
-    </td>
-  </tr>
-  {{ end }}
-{{ end }}
+        <a target="_blank" href="{{.URL}}">{{.Title}}</a>
+    </div>
+  </div>
+  {{end}}
+{{end}}
 </table>
 
 </body>
