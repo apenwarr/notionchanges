@@ -36,23 +36,29 @@ func lastEditor(cache *Cache, a *notionapi.Activity) (email string, lastEdit tim
 	return email, when
 }
 
-func blockTitle(cache *Cache, id string) (string, error) {
+func blockTitles(cache *Cache, id string) (titles []string, err error) {
 	r := cache.RecordMap.Blocks[id]
 	for r != nil {
 		if r.Block != nil && r.Block.GetTitle() != nil {
-			break
+			ts := r.Block.GetTitle()
+			titles = append(titles, notionapi.TextSpansToString(ts))
+		} else if r.Collection != nil && r.Collection.Name != nil {
+			ts := r.Collection.GetName()
+			titles = append(titles, ts)
 		}
 		id = r.ID
 		r = parentOf(cache, r)
 	}
+	if len(titles) > 0 {
+		return titles, nil
+	}
+
 	if r == nil {
-		return "", fmt.Errorf("no block object for %q", id)
+		return nil, fmt.Errorf("no block object for %q", id)
 	} else if r.Block == nil {
-		return "", fmt.Errorf("no block sub-object for %q", id)
-	} else if len(r.Block.GetTitle()) == 0 {
-		return "", fmt.Errorf("title is empty for %q", id)
+		return nil, fmt.Errorf("no block sub-object for %q", id)
 	} else {
-		return notionapi.TextSpansToString(r.Block.GetTitle()), nil
+		return nil, fmt.Errorf("title is empty for %q", id)
 	}
 }
 
@@ -180,11 +186,15 @@ func collectHistory(cache *Cache) []Page {
 	for i := range pages {
 		p := &pages[i]
 
-		title, err := blockTitle(cache, p.ID)
+		titles, err := blockTitles(cache, p.ID)
 		if err != nil {
 			p.Title = fmt.Sprintf("%s", err)
 		} else {
-			p.Title = title
+			p.Title = titles[0]
+			titles = titles[1:]
+			for i := range titles {
+				p.Path = append(p.Path, titles[len(titles)-1-i])
+			}
 		}
 
 		p.Permitted = checkPermitted(cache, p.ID)

@@ -22,7 +22,7 @@
     background: #eee;
   }
   td {
-    padding: 0.2em;
+    padding: 0.2em 0.4em 0.2em 0.4em;
   }
   td.what {
     max-width: 5in;
@@ -32,6 +32,18 @@
   }
   td.who {
     text-align: right;
+  }
+  .path {
+    display: block;
+    font-size: 70%;
+    color: #888;
+  }
+  .pathbit {
+    white-space: nowrap;
+  }
+  .title {
+    display: block;
+    padding-left: 0.5em;
   }
 </style>
 </head>
@@ -44,8 +56,17 @@
   {{ if .Permitted }}
   <tr>
     <td class="who">{{.Who}}</td>
-    <td class="when"><a href="{{.URL}}">{{.Date}}</a></td>
-    <td class="what">{{.Title}}</td>
+    <td class="when">{{.Date}}</a>
+    <td class="what">
+      {{if .Path}}
+        <span class="path">
+        {{range .Path}}
+          <span class="pathbit">{{.}} →</span>
+        {{end}}
+        </span>
+      {{end}}
+      <a class="title" target="_blank" href="{{.URL}}">{{.Title}}</a>
+    </td>
   </tr>
   {{ end }}
 {{ end }}
