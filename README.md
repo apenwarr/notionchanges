@@ -51,7 +51,7 @@ directory at the time you start the `notionchanges` binary:
 
 - `space.id`: a text file containing the notion id of the "space" that forms the root of your
   notion database. You can find this by using Chrome's debugger to inspect
-  the response to a `loadPageChunk` command in notion. (It generates at
+  the response to a `loadCachedPageChunk` command in notion. (It generates at
   least one of these every time you load notion.) Look inside the returned
   `recordMap` object, then in the `space` object, and copy the uuid in
   there. [TODO: if none is configured, offer a list of spaces to choose
